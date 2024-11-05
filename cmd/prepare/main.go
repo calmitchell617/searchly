@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log/slog"
 	"os"
+	"time"
 )
 
 type config struct {
@@ -45,6 +46,7 @@ func main() {
 	}
 
 	var err error
+	start := time.Now()
 
 	switch cfg.system {
 	case "milvus":
@@ -63,5 +65,5 @@ func main() {
 		os.Exit(1)
 	}
 
-	logger.Info(fmt.Sprintf("Done preparing %s", cfg.system))
+	logger.Info(fmt.Sprintf("Done preparing %s in %v", cfg.system, time.Since(start)))
 }

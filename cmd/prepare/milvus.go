@@ -107,7 +107,7 @@ func (app Application) prepareMilvus() error {
 
 	app.logger.Info(fmt.Sprintf("Data flushed in %v", time.Since(start)))
 
-	app.logger.Info(fmt.Sprintf("Creating index on %s. This could take a while, generally around 10X as long as insertions", embeddingCol))
+	app.logger.Info(fmt.Sprintf("Creating index on %s. This takes 5X-10X as long as insertions", embeddingCol))
 	start = time.Now()
 
 	idx, err := entity.NewIndexHNSW(entity.L2, mValue, efConstruction)
