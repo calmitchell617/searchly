@@ -77,7 +77,7 @@ func (app Application) prepareMilvus() error {
 
 		for i := 0; i < chunkSize; i++ {
 			idList[i] = int64(counter + i)
-			urlList[i] = exampleSite + fmt.Sprintf("page-%d", counter+i)
+			urlList[i] = fmt.Sprintf("%spage-%d", exampleSite, counter+i)
 			vec := make([]float32, app.cfg.dimensions)
 			for j := 0; j < app.cfg.dimensions; j++ {
 				vec[j] = rand.Float32()
@@ -107,7 +107,7 @@ func (app Application) prepareMilvus() error {
 
 	app.logger.Info(fmt.Sprintf("Data flushed in %v", time.Since(start)))
 
-	app.logger.Info(fmt.Sprintf("Creating index on %s. This could take a while.", embeddingCol))
+	app.logger.Info(fmt.Sprintf("Creating index on %s. This could take a while, generally around 10X as long as insertions", embeddingCol))
 	start = time.Now()
 
 	idx, err := entity.NewIndexHNSW(entity.L2, mValue, efConstruction)

@@ -21,7 +21,7 @@ build/prepare:
 ## prepare/milvus
 .PHONY: prepare/milvus
 prepare/milvus: build/prepare
-	./bin/prepare -system milvus -num-entities 1000000
+	./bin/prepare -system milvus -num-entities 1000000 -host ${MILVUS_HOST}
 
 ## prepare/qdrant
 .PHONY: prepare/qdrant
