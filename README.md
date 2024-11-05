@@ -1,0 +1,1 @@
+# Searchly vector DB benchmark
