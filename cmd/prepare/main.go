@@ -9,16 +9,20 @@ import (
 )
 
 type config struct {
-	system      string
-	host        string
-	port        int
-	dimensions  int
-	numEntities int
+	system         string
+	host           string
+	port           int
+	grpcPort       int
+	dimensions     int
+	numEntities    int
+	efConstruction int
+	m              int
 }
 
 type Application struct {
-	logger *slog.Logger
-	cfg    config
+	logger      *slog.Logger
+	cfg         config
+	exampleSite string
 }
 
 func main() {
@@ -28,8 +32,11 @@ func main() {
 	flag.StringVar(&cfg.system, "system", "", "System type")
 	flag.StringVar(&cfg.host, "host", "localhost", "Hostname")
 	flag.IntVar(&cfg.port, "port", 0, "Port")
+	flag.IntVar(&cfg.grpcPort, "grpc-port", 0, "gRPC port")
 	flag.IntVar(&cfg.dimensions, "dimensions", 1024, "Vector dimensions")
 	flag.IntVar(&cfg.numEntities, "num-entities", 100000, "Number of entities")
+	flag.IntVar(&cfg.efConstruction, "ef-construction", 64, "efConstruction")
+	flag.IntVar(&cfg.m, "m", 16, "m")
 
 	flag.Parse()
 
@@ -41,8 +48,9 @@ func main() {
 	}
 
 	app := Application{
-		logger: logger,
-		cfg:    cfg,
+		logger:      logger,
+		cfg:         cfg,
+		exampleSite: "http://example.com/",
 	}
 
 	var err error

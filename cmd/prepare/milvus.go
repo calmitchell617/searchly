@@ -44,7 +44,7 @@ func (app Application) prepareMilvus() error {
 		_ = client.DropCollection(ctx, collectionName)
 	}
 
-	schema := entity.NewSchema().WithName(collectionName).WithDescription("Web pages to semantically search").
+	schema := entity.NewSchema().WithName(collectionName).
 		WithField(entity.NewField().WithName(idCol).WithDataType(entity.FieldTypeInt64).WithIsPrimaryKey(true).WithIsAutoID(false)).
 		WithField(entity.NewField().WithName(urlCol).WithDataType(entity.FieldTypeVarChar).WithMaxLength(256)).
 		WithField(entity.NewField().WithName(embeddingCol).WithDataType(entity.FieldTypeFloatVector).WithDim(int64(app.cfg.dimensions)))
@@ -64,10 +64,7 @@ func (app Application) prepareMilvus() error {
 	app.logger.Info(fmt.Sprintf("Inserting %d random entities", app.cfg.numEntities))
 
 	chunkSize := 10000
-	mValue := 16
-	efConstruction := 64
 	start := time.Now()
-	exampleSite := "http://example.com/"
 
 	for counter := 0; counter < app.cfg.numEntities; counter += chunkSize {
 
@@ -77,7 +74,7 @@ func (app Application) prepareMilvus() error {
 
 		for i := 0; i < chunkSize; i++ {
 			idList[i] = int64(counter + i)
-			urlList[i] = fmt.Sprintf("%spage-%d", exampleSite, counter+i)
+			urlList[i] = fmt.Sprintf("%spage-%d", app.exampleSite, counter+i)
 			vec := make([]float32, app.cfg.dimensions)
 			for j := 0; j < app.cfg.dimensions; j++ {
 				vec[j] = rand.Float32()
@@ -110,7 +107,7 @@ func (app Application) prepareMilvus() error {
 	app.logger.Info(fmt.Sprintf("Creating index on %s. This takes 5X-10X as long as insertions", embeddingCol))
 	start = time.Now()
 
-	idx, err := entity.NewIndexHNSW(entity.L2, mValue, efConstruction)
+	idx, err := entity.NewIndexHNSW(entity.COSINE, app.cfg.m, app.cfg.efConstruction)
 	if err != nil {
 		return fmt.Errorf("failed to create index, err: %v", err)
 	}

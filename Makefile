@@ -21,17 +21,17 @@ build/prepare:
 ## prepare/milvus
 .PHONY: prepare/milvus
 prepare/milvus: build/prepare
-	./bin/prepare -system milvus -num-entities 1000000 -host ${MILVUS_HOST}
-
-## prepare/qdrant
-.PHONY: prepare/qdrant
-prepare/qdrant: build/prepare
-	./bin/prepare -system qdrant
+	./bin/prepare -system milvus -host ${MILVUS_HOST}
 
 ## prepare/weaviate
 .PHONY: prepare/weaviate
 prepare/weaviate: build/prepare
-	./bin/prepare -system weaviate
+	./bin/prepare -system weaviate -host ${WEAVIATE_HOST}
+
+## prepare/qdrant
+.PHONY: prepare/qdrant
+prepare/qdrant: build/prepare
+	./bin/prepare -system qdrant -host ${QDRANT_HOST}
 
 # ----------------------------------------------
 # DEPLOY DBS
