@@ -4,10 +4,10 @@ include .envrc
 # BUILD APPS
 # ----------------------------------------------
 
-## build/searchly: build the cmd/searchly application
-.PHONY: build/searchly
-build/searchly:
-	go build -ldflags="-s -w" -o=./bin/searchly ./cmd/searchly
+## build/benchmark: build the cmd/benchmark application
+.PHONY: build/benchmark
+build/benchmark:
+	go build -ldflags="-s -w" -o=./bin/benchmark ./cmd/benchmark
 
 ## build/prepare: build the cmd/prepare application
 .PHONY: build/prepare
@@ -21,7 +21,7 @@ build/prepare:
 ## prepare/milvus
 .PHONY: prepare/milvus
 prepare/milvus: build/prepare
-	./bin/prepare -system milvus -host ${MILVUS_HOST}
+	./bin/prepare -system milvus -host ${MILVUS_HOST} -num-entities 1000000
 
 ## prepare/weaviate
 .PHONY: prepare/weaviate
@@ -31,7 +31,26 @@ prepare/weaviate: build/prepare
 ## prepare/qdrant
 .PHONY: prepare/qdrant
 prepare/qdrant: build/prepare
-	./bin/prepare -system qdrant -host ${QDRANT_HOST}
+	./bin/prepare -system qdrant -host ${QDRANT_HOST} -num-entities 1000000
+
+# ----------------------------------------------
+# RUN BENCHMARKS
+# ----------------------------------------------
+
+## benchmark/milvus
+.PHONY: benchmark/milvus
+benchmark/milvus: build/benchmark
+	./bin/benchmark -system milvus -host ${MILVUS_HOST}
+
+## benchmark/weaviate
+.PHONY: benchmark/weaviate
+benchmark/weaviate: build/benchmark
+	./bin/benchmark -system weaviate -host ${WEAVIATE_HOST}
+
+## benchmark/qdrant
+.PHONY: benchmark/qdrant
+benchmark/qdrant: build/benchmark
+	./bin/benchmark -system qdrant -host ${QDRANT_HOST}
 
 # ----------------------------------------------
 # DEPLOY DBS

@@ -53,11 +53,12 @@ func (app Application) prepareWeaviate() error {
 		return fmt.Errorf("failed to check class existence -> %s", err.Error())
 	}
 
-	ctx, cancel = context.WithTimeout(context.Background(), 1*time.Second)
-	defer cancel()
-
 	if exists {
 		app.logger.Info("Pages class already exists, dropping")
+
+		ctx, cancel = context.WithTimeout(context.Background(), 1*time.Second)
+		defer cancel()
+
 		err = client.Schema().ClassDeleter().WithClassName(className).Do(ctx)
 		if err != nil {
 			return fmt.Errorf("failed to delete class pages -> %s", err.Error())
