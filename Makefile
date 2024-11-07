@@ -26,7 +26,7 @@ prepare/milvus: build/prepare
 ## prepare/weaviate
 .PHONY: prepare/weaviate
 prepare/weaviate: build/prepare
-	./bin/prepare -system weaviate -host ${WEAVIATE_HOST}
+	./bin/prepare -system weaviate -host ${WEAVIATE_HOST} -num-entities 1000000
 
 ## prepare/qdrant
 .PHONY: prepare/qdrant
@@ -40,17 +40,17 @@ prepare/qdrant: build/prepare
 ## benchmark/milvus
 .PHONY: benchmark/milvus
 benchmark/milvus: build/benchmark
-	./bin/benchmark -system milvus -host ${MILVUS_HOST}
+	./bin/benchmark -system milvus -host ${MILVUS_HOST} -duration 61m
 
 ## benchmark/weaviate
 .PHONY: benchmark/weaviate
 benchmark/weaviate: build/benchmark
-	./bin/benchmark -system weaviate -host ${WEAVIATE_HOST}
+	./bin/benchmark -system weaviate -host ${WEAVIATE_HOST} -duration 61m
 
 ## benchmark/qdrant
 .PHONY: benchmark/qdrant
 benchmark/qdrant: build/benchmark
-	./bin/benchmark -system qdrant -host ${QDRANT_HOST}
+	./bin/benchmark -system qdrant -host ${QDRANT_HOST} -duration 61m
 
 # ----------------------------------------------
 # DEPLOY DBS

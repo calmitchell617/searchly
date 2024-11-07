@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/csv"
 	"flag"
 	"fmt"
 	"log/slog"
@@ -9,14 +10,15 @@ import (
 )
 
 type config struct {
-	system      string
-	host        string
-	port        int
-	grpcPort    int
-	duration    time.Duration
-	dimensions  int
-	concurrency int
-	topK        int
+	system       string
+	host         string
+	port         int
+	grpcPort     int
+	duration     time.Duration
+	dimensions   int
+	concurrency  int
+	topK         int
+	logFrequency time.Duration
 }
 
 type Application struct {
@@ -36,6 +38,7 @@ func main() {
 	flag.IntVar(&cfg.dimensions, "dimensions", 1024, "Dimensions")
 	flag.IntVar(&cfg.topK, "topK", 10, "TopK")
 	flag.DurationVar(&cfg.duration, "duration", 1*time.Minute, "Duration")
+	flag.DurationVar(&cfg.logFrequency, "log-frequency", 10*time.Second, "Log frequency")
 
 	flag.Parse()
 
@@ -52,14 +55,15 @@ func main() {
 	}
 
 	var err error
+	var results [][]string
 
 	switch cfg.system {
 	case "milvus":
-		err = app.benchmarkMilvus()
+		results, err = app.benchmarkMilvus()
 	case "weaviate":
-		err = app.benchmarkWeaviate()
+		results, err = app.benchmarkWeaviate()
 	case "qdrant":
-		err = app.benchmarkQdrant()
+		results, err = app.benchmarkQdrant()
 	default:
 		logger.Error("Invalid system type")
 		os.Exit(1)
@@ -70,5 +74,25 @@ func main() {
 		os.Exit(1)
 	}
 
-	logger.Info(fmt.Sprintf("Done benchmarking %v", cfg.system))
+	file, err := os.Create(fmt.Sprintf("results/%v_%v.csv", cfg.system, time.Now().Unix()))
+	if err != nil {
+		logger.Error(fmt.Sprintf("Failed to create CSV file: %v", err))
+		os.Exit(1)
+	}
+	defer file.Close()
+
+	writer := csv.NewWriter(file)
+	defer writer.Flush()
+
+	writer.Write([]string{"minute", "num_queries"})
+
+	for _, row := range results {
+		err = writer.Write(row)
+		if err != nil {
+			logger.Error(fmt.Sprintf("Failed to write row to CSV file: %v", err))
+			os.Exit(1)
+		}
+	}
+
+	logger.Info(fmt.Sprintf("Done benchmarking %v, results written to %v", cfg.system, file.Name()))
 }
