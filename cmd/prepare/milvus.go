@@ -107,7 +107,7 @@ func (app Application) prepareMilvus() error {
 	app.logger.Info(fmt.Sprintf("Creating index on %s. This takes 5X-10X as long as insertions", embeddingCol))
 	start = time.Now()
 
-	idx, err := entity.NewIndexHNSW(entity.COSINE, app.cfg.m, app.cfg.efConstruction)
+	idx, err := entity.NewIndexDISKANN(entity.COSINE)
 	if err != nil {
 		return fmt.Errorf("failed to create index, err: %v", err)
 	}
