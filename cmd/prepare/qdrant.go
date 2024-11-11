@@ -61,6 +61,7 @@ func (app Application) prepareQdrant() error {
 
 	efConstruct := uint64(app.cfg.efConstruction)
 	m := uint64(app.cfg.m)
+	onDisk := false
 
 	client.CreateCollection(ctx, &qdrant.CreateCollection{
 		CollectionName: collectionName,
@@ -70,6 +71,7 @@ func (app Application) prepareQdrant() error {
 			HnswConfig: &qdrant.HnswConfigDiff{
 				EfConstruct: &efConstruct,
 				M:           &m,
+				OnDisk:      &onDisk,
 			},
 		}),
 	})
